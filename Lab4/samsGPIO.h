@@ -10,8 +10,14 @@ struct GPIO
   byte PIN;  
 };
 
+#ifndef INPUT
+#define INPUT 0
+#endif
+#ifndef OUTPUT
+#define OUTPUT 1
+#endif
 //Functions
-void SetMode(GPIO &GPIO, byte MODE)
+void GPIO_SetMode(GPIO &GPIO, byte MODE)
 {
   if(MODE == INPUT)
     *GPIO.DDR &= ~(1 << GPIO.PIN);
@@ -19,7 +25,15 @@ void SetMode(GPIO &GPIO, byte MODE)
     *GPIO.DDR |= 1 << GPIO.PIN; 
 }
 
-void SetState(GPIO &GPIO, byte STATE)
+
+#ifndef LOW
+#define LOW 0
+#endif
+#ifndef HIGH
+#define HIGH 1
+#endif
+
+void GPIO_SetState(GPIO &GPIO, byte STATE)
 {
   if(STATE == LOW)
     *GPIO.PORT_OUT &= ~(1 << GPIO.PIN);
@@ -27,7 +41,7 @@ void SetState(GPIO &GPIO, byte STATE)
     *GPIO.PORT_OUT |= 1 << GPIO.PIN;
 }
 
-byte GetState(GPIO &GPIO)
+byte GPIO_GetState(GPIO &GPIO)
 {
   if(*GPIO.PORT_IN >> GPIO.PIN)
     return HIGH;

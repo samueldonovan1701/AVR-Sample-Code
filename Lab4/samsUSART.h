@@ -4,7 +4,6 @@
 #include <avr/io.h>
 typedef volatile unsigned char reg;
 
-//http://maxembedded.com/2013/09/the-usart-of-the-avr/
 struct USART
 {
     reg* BRRL; //Baud Rate Register Lower//
@@ -65,12 +64,12 @@ void USART_ClearTxBit9(USART &U); //TXB8 (W 0)
 byte USART_GetMode(USART &U); //UMSEL (R)
 void USART_SetMode(USART &U, byte mode=USART_ASYNC); //UMSEL (W)
 
-#define USART_DISABLED 0b00
-#define USART_RESERVED 0b01
-#define USART_EVEN     0b10
-#define USART_ODD      0b11
+#define USART_PARITY_DISABLED 0b00
+#define USART_PARITY_RESERVED 0b01
+#define USART_PARITY_EVEN     0b10
+#define USART_PARITY_ODD      0b11
 byte USART_GetParity(USART &U); //UPM (R)
-void USART_SetParity(USART &U, byte mode=USART_DISABLED); //UPM (W)
+void USART_SetParity(USART &U, byte mode=USART_PARITY_DISABLED); //UPM (W)
 
 #define USART_ONE_STOP_BIT 0b0
 #define USART_TWO_STOP_BIT 0b1
@@ -313,6 +312,12 @@ void USART_SetFrameSize(USART &U, byte size) //size can be 5-9 bits
 {
     *U.CSRC &= 0b11111001; //Clear UCSZ 0 & 1
     *U.CSRB &= 0b11111011; //Clear UCSZ 2
+
+    if(size == 9)
+        size = 0b111;
+    else
+        size = size - 5;
+    
     *U.CSRC |= (size & 0b011) << 1; //Set UCSZ 0 & 1
     *U.CSRC |= (size & 0b100); //Set UCSZ 2
 }
@@ -334,9 +339,9 @@ void USART_SetBaudRate(USART &U, unsigned long baud_rate)
 {
     unsigned short val = 0;
     
-    if(GetMode(U) == SYNC) //SYNC
+    if(USART_GetMode(U) == USART_SYNC) //SYNC
         val = F_CPU/(2UL*baud_rate)-1;
-    else if(DoubleTransmissionSpeedIsEnabled(U)) //Double ASYNC
+    else if(USART_DoubleTransmissionSpeedIsEnabled(U)) //Double ASYNC
         val = F_CPU/(8UL*baud_rate)-1;
     else //ASYNC
         val = F_CPU/(16UL*baud_rate)-1;
