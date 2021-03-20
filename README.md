@@ -1,5 +1,5 @@
 # AVR Sample Code
-This repository contains code I wrote for my Embedded Intelligent Systems (CENG 347) course at SDMines. 
+This repository contains code written by Samuel Donovan and Samantha Pfeiffer for their Embedded Intelligent Systems (CENG 347) course at SDMines. None of it is copyrighted and anyone is free to take any code and do anything with it.
 
 All of the code was written for an ATmega 2560 using the Arduino IDE and Sublime Text.
 
